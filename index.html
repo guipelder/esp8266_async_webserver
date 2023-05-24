@@ -1,0 +1,156 @@
+<!DOCTYPE HTML><html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ywrobot Led Pwm</title>
+  <style>
+    html{
+      background-color: grey;
+      /* flex-direction: row; */
+      
+    }
+    html {font-family: Arial; display: inline-block; text-align: center;}
+    h2 {font-size: 2.3rem;
+      /* translate: -20rem; */
+    }
+    p {font-size: 1.9rem;
+      /* translate: -20rem; */
+    }
+    body {max-width: 400px; margin:0px auto; padding-bottom: 25px;}
+    .slider { -webkit-appearance: none; margin: 14px; width: 25rem; height: 25px; background: #FFD65C;
+      outline: none; -webkit-transition: .2s; transition: opacity .2s; 
+    display: inline-flex;
+    
+    }
+
+    .slider::-webkit-slider-thumb {-webkit-appearance: none; appearance: none; width: 35px; height: 35px; background: #003249; cursor: pointer;}
+    .slider::-moz-range-thumb { width: 3rem; height: 35px; background: #003249; cursor: pointer; } 
+
+    .toggle {position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 6px}
+    .toggle:before {position: absolute; content: ""; height: 52px; width: 52px; left: 8px; bottom: 8px; background-color: #000; -webkit-transition: .1s; transition: .1s; border-radius: 3px}
+
+    .switch {position: relative; display: inline-block; width: 120px; height: 68px} 
+    .switch input {display: none}
+
+    textarea{ background-color:wheat; color: #000;}
+
+    input:checked+.toggle {background-color: #b30000}
+    input:checked+.toggle:before {-webkit-transform: translateX(52px); -ms-transform: translateX(52px); transform: translateX(52px)}
+
+  </style>
+    
+  </style>
+</head>
+<body>
+  <h2>(Ywrobot) RGB Controller</h2>
+  
+  <p> Red -> <span id="RedSliderValue">%RedVALUE%</span></p>
+  <p><input type="range" onchange="updateRedPWM(this)" id="RedSlider" min="0" max="255" value="%RedVALUE%" step="1" class="slider"></p>
+  
+  <p> Green -> <span id="GreenSliderValue">%GreenVALUE%</span></p>
+  <p><input type="range" onchange="updateGreenPWM(this)" id="GreenSlider" min="0" max="255" value="%GreenVALUE%" step="1" class="slider"></p>
+  
+  <p> Blue -> <span id="BlueSliderValue">%BlueVALUE%</span></p>
+  <p><input type="range" onchange="updateBluePWM(this)" id="BlueSlider" min="0" max="255" value="%BlueVALUE%" step="1" class="slider"></p>
+  
+  <h4>Built-in LED GPIO2</h4>
+  <label class="switch">
+    <input type="checkbox" onchange="toggleCheckbox(this)" id="2"  >
+    <span class="toggle"></span>
+  </label>
+  <hr>
+  <h3>raw input as message<hr></h3>
+  <div id="getStringForm">
+    <input type="text" id="inputString" placeholder="Enter your String">
+    <input type="button" value="Submit"  onclick="sendRAW(this)">
+  </div><br>
+
+  <textarea id='log' rows=10 cols=60 autofocus>
+
+  </textarea>
+
+
+<script>
+  
+function sendRAW(element) {
+  var xhr = new XMLHttpRequest();
+  var contentString =  document.getElementById("inputString").value;
+  if(contentString!= ""){
+    xhr.open("GET", "/raw?value="+contentString, true);
+    console.log("the sent content is ->\n\""+ contentString+"\"");
+    alert("the sent content is ->\n\""+ contentString+"\"");
+    
+    xhr.send();
+
+  }else{
+    alert("Enter some String first \nthen submit")
+  }
+
+
+  
+}
+function updateRedPWM(element) {
+  var sliderValue = document.getElementById("RedSlider").value;
+  document.getElementById("RedSliderValue").innerHTML = sliderValue;
+  console.log(sliderValue);
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "/red?value="+sliderValue, true);
+  xhr.send();
+}
+function updateGreenPWM(element) {
+  var sliderValue = document.getElementById("GreenSlider").value;
+  document.getElementById("GreenSliderValue").innerHTML = sliderValue;
+  console.log(sliderValue);
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "/green?value="+sliderValue, true);
+  xhr.send();
+}
+function updateBluePWM(element) {
+  var sliderValue = document.getElementById("BlueSlider").value;
+  document.getElementById("BlueSliderValue").innerHTML = sliderValue;
+  console.log(sliderValue);
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "/blue?value="+sliderValue, true);
+  xhr.send();
+}
+
+function updateLEDPWM(element) {
+  var sliderValue = document.getElementById("BlueSlider").value;
+  document.getElementById("BlueSliderValue").innerHTML = sliderValue;
+  console.log(sliderValue);
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "/blue?value="+sliderValue, true);
+  xhr.send();
+}
+function toggleCheckbox(element) {
+  var xhr = new XMLHttpRequest();
+  // if(element.checked){ xhr.open("GET", "/builtin?value="+element.id+"&state=1", true); }
+  // else { xhr.open("GET", "/builtin?value="+element.id+"&state=0", true); }
+  if(element.checked){ xhr.open("GET", "/builtin?value="+"0", true); }
+  else { xhr.open("GET", "/builtin?value="+"255", true); }
+  xhr.send();
+}
+function timeUpdate(element) {
+// TODO there is work that needs to be done the function is half complete and 
+// the index.h has not been updated yet with this html
+
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("log").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "/time", true);
+  xhttp.send();
+}, 1000 ) ;
+
+
+
+
+}
+timeUpdate();
+
+</script>
+</body>
+</html>
+
