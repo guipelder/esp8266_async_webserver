@@ -20,6 +20,11 @@ whenever you use disconnect button in the page you will get an AP named **esp_wi
 then you can enter your new credentials, after that the board restarts and connects to new wifi.
 note that your old credentials will be erased each time for the   
 `WiFi.disconnect(true,true);` in `testasync.ino` file.
+## Note
+for finding the IP of board you can check your router or
+alternativly you can use `ip neigh` command in linux or   
+termux(android terminal emulator) 
+for finding the IP. 
 ## Optional
 to prevent the board from erasing the the credentials change the  
 `WiFi.disconnect(true,true);`
