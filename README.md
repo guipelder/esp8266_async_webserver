@@ -5,7 +5,7 @@ here is the schematics of the board that i used
 
 ![NodeMCU-ESP8266-Pinout](https://github.com/guipelder/testasync/assets/79325164/12429f0f-6834-4c53-8404-a78274bbf767)
 ##
-i used D4(GPIO2) , D3(GPIO0) , D2(GPIO4) 
+i used D4(GPIO2) , D3(GPIO0) , D2(GPIO4) and 3V pins for this module
 1. D4 -> red 
 2. D3 -> green
 3. D2 -> blue
