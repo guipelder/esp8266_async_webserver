@@ -8,7 +8,7 @@
       /* flex-direction: row; */
       
     }
-    html {font-family: Arial; display: inline-block; text-align: center;}
+    html {font-family: Arial; display: flex; text-align: center;}
     h2 {font-size: 2.3rem;
       /* translate: -20rem; */
     }
@@ -22,11 +22,15 @@
     
     }
 
-    .slider::-webkit-slider-thumb {-webkit-appearance: none; appearance: none; width: 35px; height: 35px; background: #003249; cursor: pointer;}
+    .slider::-webkit-slider-thumb {-webkit-appearance: none; appearance: none; width: 35px; height: 35px;
+     background: #003249; cursor: pointer;}
+
     .slider::-moz-range-thumb { width: 3rem; height: 35px; background: #003249; cursor: pointer; } 
 
     .toggle {position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 6px}
-    .toggle:before {position: absolute; content: ""; height: 52px; width: 52px; left: 8px; bottom: 8px; background-color: #000; -webkit-transition: .1s; transition: .1s; border-radius: 3px}
+
+    .toggle:before {position: absolute; content: ""; height: 52px; width: 52px; left: 8px; bottom: 8px;
+     background-color: #000; -webkit-transition: .1s; transition: .1s; border-radius: 3px}
 
     .switch {position: relative; display: inline-block; width: 120px; height: 68px} 
     .switch input {display: none}
@@ -34,7 +38,8 @@
     textarea{ background-color:wheat; color: #000;}
 
     input:checked+.toggle {background-color: #b30000}
-    input:checked+.toggle:before {-webkit-transform: translateX(52px); -ms-transform: translateX(52px); transform: translateX(52px)}
+    input:checked+.toggle:before {-webkit-transform: translateX(52px);
+     -ms-transform: translateX(52px); transform: translateX(52px)}
 
   </style>
     
@@ -65,12 +70,26 @@
   </div><br>
 
   <textarea id='log' rows=10 cols=60 autofocus>
+  
 
   </textarea>
 
+  <h3><hr></h3>
+  <br>
+  <input onclick="disconnect(this)" type="button" value="disconnect"/>
+
+  <h3>click for connecting to another wifi using AP "esp_wifi"</h3>
 
 <script>
+function disconnect(element){
+  var offValue = "off";
+  console.log(offValue);
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "/off?value="+ offValue, true);
+  xhr.send();
+}
   
+
 function sendRAW(element) {
   var xhr = new XMLHttpRequest();
   var contentString =  document.getElementById("inputString").value;
@@ -102,6 +121,7 @@ function updateGreenPWM(element) {
   console.log(sliderValue);
   var xhr = new XMLHttpRequest();
   xhr.open("GET", "/green?value="+sliderValue, true);
+  
   xhr.send();
 }
 function updateBluePWM(element) {
@@ -113,14 +133,14 @@ function updateBluePWM(element) {
   xhr.send();
 }
 
-function updateLEDPWM(element) {
-  var sliderValue = document.getElementById("BlueSlider").value;
-  document.getElementById("BlueSliderValue").innerHTML = sliderValue;
-  console.log(sliderValue);
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", "/blue?value="+sliderValue, true);
-  xhr.send();
-}
+// function updateLEDPWM(element) {
+//   var sliderValue = document.getElementById("BlueSlider").value;
+//   document.getElementById("BlueSliderValue").innerHTML = sliderValue;
+//   console.log(sliderValue);
+//   var xhr = new XMLHttpRequest();
+//   xhr.open("GET", "/blue?value="+sliderValue, true);
+//   xhr.send();
+// }
 function toggleCheckbox(element) {
   var xhr = new XMLHttpRequest();
   // if(element.checked){ xhr.open("GET", "/builtin?value="+element.id+"&state=1", true); }
@@ -137,18 +157,21 @@ setInterval(function ( ) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("log").innerHTML = this.responseText;
+      var textarea = document.getElementById('log');
+      textarea.scrollTop = textarea.scrollHeight;
+      document.getElementById("log").innerHTML += this.responseText+ "\n";
     }
   };
   xhttp.open("GET", "/time", true);
   xhttp.send();
-}, 1000 ) ;
-
-
-
+}, 2000 ) ;
 
 }
 timeUpdate();
+
+
+
+
 
 </script>
 </body>

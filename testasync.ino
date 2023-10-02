@@ -1,8 +1,3 @@
-// #if defined(ESP8266)
-// #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino
-// #else
-// #include <WiFi.h>
-// #endif
 
 #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino
 #include "index.h"
@@ -12,16 +7,17 @@
 
 
 
-const int red = 5;
-const int green = 4;
-const int blue = 0;
+const int red = 4;
+const int green = 0;
+const int blue = 2;
 
 // String sliderValue = "255";
-String redValue = "0";
-String greenValue = "0";
-String blueValue = "0";
+String redValue = "255";
+String greenValue = "255";
+String blueValue = "255";
 String builtinValue = "255";
 String rawInput = "";
+String offValue = "on";
 
 const char* PARAM_INPUT = "value";
 
@@ -31,10 +27,10 @@ DNSServer dns;
 
 AsyncWiFiManager wifiManager(&server_esp,&dns);
 
-WiFiServer server(80);
 
 // Variable to store the HTTP request
 String header;
+String log_string ;
 
 
 // Current time
@@ -69,7 +65,6 @@ void setup() {
   Serial.println(WiFi.localIP());
   
   // Route for root / web page
-  // The Arrow(->) operator exists to access the members of the structure or the unions using pointers.
   server_esp.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/html", index_html, processor);
   });
@@ -78,7 +73,6 @@ void setup() {
   server_esp.on("/red", HTTP_GET, [] (AsyncWebServerRequest *request) {
     String inputMessage;
     // GET input1 value on <ESP_IP>/red?value=<inputMessage>
-    // The Arrow(->) operator exists to access the members of the structure or the unions using pointers.
     if (request->hasParam(PARAM_INPUT)) {
       inputMessage = request->getParam(PARAM_INPUT)->value();
       redValue = inputMessage;
@@ -88,6 +82,8 @@ void setup() {
       inputMessage = "No message sent";
     }
     Serial.println("red led = "+inputMessage);
+    
+    log_string = "red led = "+inputMessage;
     request->send(200, "text/plain", "OK");
   });
   
@@ -106,6 +102,7 @@ void setup() {
       inputMessage = "No message sent";
     }
     Serial.println("green led = "+inputMessage);
+    log_string = "green led = "+inputMessage;
     request->send(200, "text/plain", "OK");
   });
 
@@ -123,6 +120,7 @@ void setup() {
       inputMessage = "No message sent";
     }
     Serial.println("blue led = "+inputMessage);
+    log_string = "blue led = "+inputMessage;
     request->send(200, "text/plain", "OK");
   });
   
@@ -131,7 +129,7 @@ void setup() {
   // Send a GET request to <ESP_IP>/builtin?value=<inputMessage>
   server_esp.on("/builtin", HTTP_GET, [] (AsyncWebServerRequest *request) {
     String inputMessage;
-    // GET input1 value on <ESP_IP>/slider?value=<inputMessage>
+    // GET input value on builtin led <ESP_IP>/builtin?value=<inputMessage>
     if (request->hasParam(PARAM_INPUT)) {
       inputMessage = request->getParam(PARAM_INPUT)->value();
       builtinValue = inputMessage;
@@ -141,13 +139,14 @@ void setup() {
       inputMessage = "No message sent";
     }
     Serial.println("builtin led = "+inputMessage);
+    log_string = "builtin led = "+inputMessage;
     request->send(200, "text/plain", "OK");
   });
   
     // Send a GET request to <ESP_IP>/raw?value=<inputMessage>
   server_esp.on("/raw", HTTP_GET, [] (AsyncWebServerRequest *request) {
     String inputMessage;
-    // GET input1 value on <ESP_IP>/raw?value=<inputMessage>
+    // GET input value on <ESP_IP>/raw?value=<inputMessage>
     if (request->hasParam(PARAM_INPUT)) {
       inputMessage = request->getParam(PARAM_INPUT)->value();
       rawInput = inputMessage;
@@ -156,6 +155,7 @@ void setup() {
       inputMessage = "No message sent";
     }
     Serial.println("raw input received = "+inputMessage);
+    log_string = "raw input received = "+inputMessage;
     request->send(200, "text/plain", "OK");
   });
 
@@ -168,8 +168,32 @@ void setup() {
     sprintf(temp, "%d,%ds",currentTime/1000,currentTime%1000);
     // Serial.println(temp);
 
-    request->send(200, "text/plain", temp);
-    // request->send(200, "text/plain", String(currentTime%1000).c_str());
+    
+    request->send(200, "text/plain", log_string);
+  });
+
+      // Send a GET request to <ESP_IP>/off?value=<inputMessage>
+  server_esp.on("/off", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    String inputMessage;
+    // GET input1 value on <ESP_IP>/off?value=<inputMessage>
+    if (request->hasParam(PARAM_INPUT)) {
+      inputMessage = request->getParam(PARAM_INPUT)->value();
+      offValue = inputMessage;
+    }
+    else {
+      inputMessage = "on";
+    }
+    if(inputMessage=="off"){
+      // putting a flag for switching to another wifi
+      offValue = "off";
+      
+              
+   
+    }
+
+    Serial.println("offValue received = "+inputMessage);
+    log_string = "offValue received = "+inputMessage;
+    request->send(200, "text/plain", "OK");
   });
 
   // Start server
@@ -196,11 +220,38 @@ void loop() {
       Serial.println("WiFi connected.");
       Serial.println("IP address: ");
       Serial.println(WiFi.localIP());
+      
 
-      server_esp.begin();                  //Start server
-      Serial.println("HTTP server started");
     }
+  
   }
+    if(offValue=="off"){
+        Serial.println("inside loop offValue 'if'");
+
+        // WiFi.mode(WIFI_STA);
+
+        WiFi.disconnect(true,true);
+
+        server_esp.end();                  //Start server
+        Serial.println("HTTP server stopped");
+      
+        wifiManager.autoConnect("esp_wifi");
+
+        offValue="on";
+
+        // ESP.eraseConfig();
+        ESP.restart();
+        
+      }
+      else{
+        //Start server
+        // Serial.println("HTTP server started");
+        Serial.println(WiFi.localIP());
+        delay(2000);
+        Serial.println(WiFi.SSID());
+        delay(2000);
+
+      }
 
   
 

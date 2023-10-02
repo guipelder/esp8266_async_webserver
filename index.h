@@ -152,7 +152,7 @@ const char index_html[] PROGMEM = R"rawliteral(
       /* flex-direction: row; */
       
     }
-    html {font-family: Arial; display: inline-block; text-align: center;}
+    html {font-family: Arial; display: flex; text-align: center;}
     h2 {font-size: 2.3rem;
       /* translate: -20rem; */
     }
@@ -214,12 +214,27 @@ const char index_html[] PROGMEM = R"rawliteral(
   </div><br>
 
   <textarea id='log' rows=10 cols=60 autofocus>
+  
 
   </textarea>
 
 
-<script>
+  <h3><hr></h3>
   
+  <input onclick="disconnect(this)" type="button" value="disconnect"/>
+
+  <h3>click for connecting to another wifi using AP "esp_wifi"</h3>
+
+<script>
+function disconnect(element){
+  var offValue = "off";
+  console.log(offValue);
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "/off?value="+ offValue, true);
+  xhr.send();
+}
+  
+
 function sendRAW(element) {
   var xhr = new XMLHttpRequest();
   var contentString =  document.getElementById("inputString").value;
@@ -280,8 +295,6 @@ function toggleCheckbox(element) {
   xhr.send();
 }
 function timeUpdate(element) {
-// TODO there is work that needs to be done the function is half complete and 
-// the index.h has not been updated yet with this html
 
 setInterval(function ( ) {
   var xhttp = new XMLHttpRequest();
@@ -290,6 +303,7 @@ setInterval(function ( ) {
       var textarea = document.getElementById('log');
       textarea.scrollTop = textarea.scrollHeight;
       document.getElementById("log").innerHTML += this.responseText+ "\n";
+      // textarea.innerHTML+= this.responseText + "\n"
     }
   };
   xhttp.open("GET", "/time", true);
