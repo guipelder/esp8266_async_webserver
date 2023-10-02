@@ -4,7 +4,8 @@ esp8266 webserver with wifimanager Async using https://github.com/alanswx/ESPAsy
 here is the schematics of the board that i used
 
 
-![NodeMCU-ESP8266-Pinout](https://github.com/guipelder/testasync/assets/79325164/12429f0f-6834-4c53-8404-a78274bbf767)
+![NodeMCU-ESP8266-Pinout](https://github.com/guipelder/esp8266_async_webserver/assets/79325164/dcb2393a-9d84-4ad1-99f4-0c7470e941fa)
+
 ##
 i used D4(GPIO2) , D3(GPIO0) , D2(GPIO4) and 3V pins for this module
 1. D4 -> red 
