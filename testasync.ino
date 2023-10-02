@@ -7,9 +7,9 @@
 
 
 
-const int red = 4;
+const int red = 2;
 const int green = 0;
-const int blue = 2;
+const int blue = 4;
 
 // String sliderValue = "255";
 String redValue = "255";
@@ -231,6 +231,7 @@ void loop() {
         // WiFi.mode(WIFI_STA);
 
         WiFi.disconnect(true,true);
+        // WiFi.disconnect(true,false);
 
         server_esp.end();                  //Start server
         Serial.println("HTTP server stopped");
