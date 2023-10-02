@@ -21,10 +21,11 @@ then you can enter your new credentials, after that the board restarts and conne
 note that your old credentials will be erased each time for the   
 `WiFi.disconnect(true,true);` in `testasync.ino` file.
 ## Note
-for finding the IP of board you can check your router or
+for finding the IP of board for the main webpage you can check your router or
 alternativly you can use `ip neigh` command in linux or   
 termux(android terminal emulator) 
-for finding the IP. 
+for finding the IP.   
+(be carefull not to use `https` instead of `http`).
 ## Optional
 to prevent the board from erasing the the credentials change the  
 `WiFi.disconnect(true,true);`
